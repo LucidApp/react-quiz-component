@@ -82,7 +82,7 @@ function Quiz({
       newQuestions = shuffleAnswerSequence(newQuestions);
     }
 
-    newQuestions.length = nrOfQuestions;
+    // newQuestions.length = nrOfQuestions;
     newQuestions = newQuestions.map((question, index) => ({
       ...question,
       questionIndex: index + 1,
