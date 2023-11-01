@@ -1,5 +1,5 @@
 {
-  "name": "@lucidapp/react-quiz-component",
+  "name": "@lucidcube/react-quiz-component",
   "version": "0.6.1",
   "description": "React Quiz Component",
   "main": "lib/Quiz.js",
@@ -46,7 +46,7 @@
   "homepage": "https://github.com/lucidapp/react-quiz-component",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucidapp/react-quiz-component.git"
+    "url": "git+https://github.com/lucidapp/react-quiz-component.git"
   },
   "dependencies": {
     "@webpack-cli/serve": "^1.6.1",
