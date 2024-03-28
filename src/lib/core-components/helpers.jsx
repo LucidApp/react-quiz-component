@@ -6,7 +6,7 @@ export const rawMarkup = (data) => {
   return { __html: snarkdown(sanitizer(data)) };
 };
 
-export const checkAnswer = (index, correctAnswer, answerSelectionType, {
+export const checkAnswer = (index, correctAnswer, answerSelectionType, answers, {
   userInput,
   userAttempt,
   currentQuestionIndex,
@@ -24,12 +24,7 @@ export const checkAnswer = (index, correctAnswer, answerSelectionType, {
   setUserAttempt,
 }) => {
   const indexStr = `${index}`;
-  const disabledAll = {
-    0: { disabled: true },
-    1: { disabled: true },
-    2: { disabled: true },
-    3: { disabled: true },
-  };
+  const disabledAll = Object.keys(answers).map(() => ({ disabled: true }));
   const userInputCopy = [...userInput];
   if (answerSelectionType === 'single') {
     if (userInputCopy[currentQuestionIndex] === undefined) {
@@ -125,6 +120,15 @@ export const checkAnswer = (index, correctAnswer, answerSelectionType, {
         }
       }
 
+      for (let i = 0; i < answers.length; i += 1) {
+        if (correctAnswer.includes(i + 1)) {
+          setButtons((prevState) => ({
+            ...prevState,
+            [i]: {},
+          }));
+        }
+      }
+
       if (cnt === maxNumberOfMultipleSelection) {
         correct.push(currentQuestionIndex);
 
@@ -149,7 +153,7 @@ export const checkAnswer = (index, correctAnswer, answerSelectionType, {
   setUserInput(userInputCopy);
 };
 
-export const selectAnswer = (index, correctAnswer, answerSelectionType, {
+export const selectAnswer = (index, correctAnswer, answerSelectionType, answers, {
   userInput,
   currentQuestionIndex,
   setButtons,
@@ -160,12 +164,7 @@ export const selectAnswer = (index, correctAnswer, answerSelectionType, {
   setIncorrect,
   setUserInput,
 }) => {
-  const selectedButtons = {
-    0: { selected: false },
-    1: { selected: false },
-    2: { selected: false },
-    3: { selected: false },
-  };
+  const selectedButtons = Object.keys(answers).map(() => ({ selected: false }));
   const userInputCopy = [...userInput];
   if (answerSelectionType === 'single') {
     correctAnswer = Number(correctAnswer);
@@ -210,6 +209,7 @@ export const selectAnswer = (index, correctAnswer, answerSelectionType, {
 
     if (userInputCopy[currentQuestionIndex].length === correctAnswer.length) {
       let exactMatch = true;
+      // eslint-disable-next-line no-restricted-syntax
       for (const input of userInput[currentQuestionIndex]) {
         if (!correctAnswer.includes(input)) {
           exactMatch = false;

@@ -15,11 +15,13 @@ function App() {
         quiz={quiz}
         shuffle
         shuffleAnswer
-      // showInstantFeedback
+        showInstantFeedback
       // continueTillCorrect
         onComplete={setQuizResult}
         onQuestionSubmit={(obj) => console.log('user question results:', obj)}
         disableSynopsis
+        timer={60}
+        allowPauseTimer
       />
     </div>
   );
