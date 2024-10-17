@@ -2,6 +2,7 @@ import React, {
   useState, useEffect, useCallback, Fragment,
 } from 'react';
 import { nanoid } from 'nanoid';
+import ProgressBar from './core-components/ProgressBar';
 import QuizResultFilter from './core-components/QuizResultFilter';
 import { checkAnswer, selectAnswer, rawMarkup } from './core-components/helpers';
 import InstantFeedback from './core-components/InstantFeedback';
@@ -10,7 +11,7 @@ import Explanation from './core-components/Explanation';
 function Core({
   questions, appLocale, showDefaultResult, onComplete, customResultPage,
   showInstantFeedback, continueTillCorrect, revealAnswerOnSubmit, allowNavigation,
-  onQuestionSubmit, timer, allowPauseTimer,
+  onQuestionSubmit, timer, allowPauseTimer, enableProgressBar, progressBarColor,
 }) {
   const [incorrectAnswer, setIncorrectAnswer] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -79,6 +80,7 @@ function Core({
       userInput,
       totalPoints,
       correctPoints,
+      timeTaken: timer - timeRemaining,
     });
   }, [totalPoints, correctPoints]);
 
@@ -180,18 +182,6 @@ function Core({
         {segment && <span className="selection-tag segment">{segment}</span>}
       </div>
     );
-  };
-
-  const isCorrectCheck = (index, correctAnswerIndex) => {
-    if (typeof correctAnswerIndex === 'string') {
-      return index === Number(correctAnswerIndex);
-    }
-
-    if (typeof correctAnswerIndex === 'object') {
-      return correctAnswerIndex.find((element) => element === index) !== undefined;
-    }
-
-    return false;
   };
 
   const renderQuizResultQuestions = useCallback(() => {
@@ -302,11 +292,7 @@ function Core({
             <button
               type="button"
               disabled={answerButtons[index].disabled || false}
-              className={`${answerButtons[index].className} answerBtn btn ${
-                isCorrectCheck(index + 1, correctAnswer) && showInstantFeedback
-                  ? 'correct'
-                  : ''
-              }`}
+              className={`${answerButtons[index].className || ''} answerBtn btn`}
               onClick={() => (revealAnswerOnSubmit ? onSelectAnswer(index) : onClickAnswer(index))}
             >
               {questionType === 'text' && <span>{answer}</span>}
@@ -317,7 +303,7 @@ function Core({
             <button
               type="button"
               onClick={() => (revealAnswerOnSubmit ? onSelectAnswer(index) : onClickAnswer(index))}
-              className={`answerBtn btn ${(allowNavigation && checkSelectedAnswer(index + 1)) ? 'selected' : null}`}
+              className={`answerBtn btn ${(allowNavigation && checkSelectedAnswer(index + 1)) ? 'selected' : ''}`}
             >
               {questionType === 'text' && answer}
               {questionType === 'photo' && <img src={answer} alt="answer" />}
@@ -391,6 +377,19 @@ function Core({
 
   return (
     <div className="questionWrapper">
+      {enableProgressBar && (
+        <>
+          <div style={{ display: 'flex', width: '100%' }}>
+            <ProgressBar
+              progress={currentQuestionIndex + 1}
+              quizLength={questions.length}
+              isEndQuiz={endQuiz}
+              progressBarColor={progressBarColor}
+            />
+          </div>
+          <br />
+        </>
+      )}
       {timer && !isRunning && (
         <div>
           {appLocale.timerTimeTaken}
